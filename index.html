@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PCB Design Studio | 3D board lab, routing game, and power-fault analytics</title>
+    <meta
+      name="description"
+      content="An open-source PCB workbench: orbit a real sensor board in 3D, route it in a game, learn twelve layout concepts, take a quiz, and reproduce a three-phase power-fault study."
+    />
+    <meta name="theme-color" content="#06090f" />
+    <link rel="canonical" href="https://m0-ar.github.io/pcb_design/" />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="PCB Design Studio" />
+    <meta
+      property="og:description"
+      content="Orbit the board. Route the signal. Learn the why. An open-source 3D PCB lab and power-fault workbench."
+    />
+    <meta property="og:url" content="https://m0-ar.github.io/pcb_design/" />
+    <meta property="og:image" content="https://m0-ar.github.io/pcb_design/assets/img/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="PCB Design Studio" />
+    <meta
+      name="twitter:description"
+      content="An open-source 3D PCB lab, routing game, and power-fault workbench."
+    />
+    <meta name="twitter:image" content="https://m0-ar.github.io/pcb_design/assets/img/og.png" />
+    <link rel="stylesheet" href="assets/css/site.css" />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "./assets/vendor/three.module.min.js",
+          "three/addons/": "./assets/vendor/addons/"
+        }
+      }
+    </script>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "PCB Design Studio",
+        "applicationCategory": "EngineeringApplication",
+        "operatingSystem": "Any",
+        "url": "https://m0-ar.github.io/pcb_design/",
+        "codeRepository": "https://github.com/M0-AR/pcb_design",
+        "license": "https://opensource.org/licenses/MIT",
+        "description": "Open-source PCB board generation, three-phase power-fault analytics, engineering reports, and an interactive 3D learning studio.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="scroll-progress" id="scroll-progress" aria-hidden="true"></div>
+
+    <header class="site-header" id="top">
+      <div class="wrap nav">
+        <a class="brand" href="#top" aria-label="PCB Design Studio home">
+          <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+            <rect x="3.5" y="3.5" width="33" height="33" rx="7" stroke="currentColor" stroke-width="1.4" />
+            <path d="M12 13h8v6h-8zM20 19h8v8h-8zM13 27h5v5" stroke="currentColor" stroke-width="1.4" />
+            <circle cx="12" cy="13" r="2.2" fill="currentColor" />
+            <circle cx="28" cy="27" r="2.2" fill="currentColor" />
+            <circle cx="13" cy="32" r="2.2" fill="currentColor" />
+            <path d="M17 27h4M28 19v-4h-4" stroke="currentColor" stroke-width="1.4" stroke-dasharray="2 2" />
+          </svg>
+          <span class="brand-text">
+            PCB / STUDIO
+            <small>open hardware workbench</small>
+          </span>
+        </a>
+
+        <nav class="nav-links" id="nav-links" aria-label="Main navigation">
+          <a href="#overview">Overview</a>
+          <a href="#lab">3D lab</a>
+          <a href="#game">Game</a>
+          <a href="#learn">Learn</a>
+          <a href="#quiz">Quiz</a>
+          <a href="#business">Business</a>
+          <a href="#research">Research</a>
+          <a href="#start">Start</a>
+        </nav>
+
+        <div class="nav-actions">
+          <a
+            class="btn btn-small"
+            href="https://github.com/M0-AR/pcb_design"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z" />
+            </svg>
+            GitHub
+          </a>
+          <button
+            class="nav-toggle"
+            id="nav-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="nav-links"
+            aria-label="Open navigation"
+          >
+            <span></span><span></span><span></span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <span class="eyebrow">Open-source hardware workbench / v1.0</span>
+            <h1 id="hero-title">
+              Design the board.<br />
+              <span class="accent">See the signal.</span><br />
+              Learn the why.
+            </h1>
+            <p class="hero-lede">
+              PCB Design Studio turns an eleven-part sensor board into a workbench you can
+              orbit, route, stress, and question. It pairs a <strong>real Python toolkit</strong>
+              with a browser-native 3D lab, a four-mission routing game, and a
+              <strong>power-fault study you can reproduce</strong>.
+            </p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#lab">
+                Open the 3D lab
+                <svg viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </a>
+              <a class="btn btn-ghost" href="#overview">Read the engineering story</a>
+            </div>
+            <div class="hero-meta" aria-label="Board facts">
+              <div><strong>11</strong><span>placed parts</span></div>
+              <div><strong>7</strong><span>named nets</span></div>
+              <div><strong>24</strong><span>illustrative routes</span></div>
+            </div>
+          </div>
+
+          <div class="studio-card" id="lab">
+            <div class="studio-stage" id="lab-stage">
+              <canvas
+                id="lab-canvas"
+                tabindex="0"
+                role="img"
+                aria-label="Interactive 3D view of the MPU6050 and ESP32 sensor board. Drag to orbit and scroll to zoom. Component details are also available in the bill of materials table."
+              ></canvas>
+              <div class="webgl-fallback" id="lab-fallback">
+                This browser could not start WebGL. The board details, bill of materials, and
+                all non-3D sections of the studio still work.
+              </div>
+              <div class="hud hud-top-left">
+                <span class="hud-pill"><span class="live-dot"></span> Live 3D</span>
+                <span class="hud-pill">11 parts</span>
+                <span class="hud-pill">7 nets</span>
+              </div>
+              <div class="hud hud-top-right">
+                <span class="hud-pill">Drag to orbit</span>
+              </div>
+              <div class="hud hud-bottom">
+                <span>Scroll to zoom</span>
+                <span>·</span>
+                <span>Click a part</span>
+              </div>
+            </div>
+            <div class="studio-toolbar" aria-label="3D lab controls">
+              <div class="tool-group" role="group" aria-label="Net presets">
+                <button class="tool is-active" type="button" data-preset="overview" aria-pressed="true">Overview</button>
+                <button class="tool" type="button" data-preset="3V3" aria-pressed="false">Power</button>
+                <button class="tool" type="button" data-preset="I2C" aria-pressed="false">I2C</button>
+                <button class="tool" type="button" data-preset="UART" aria-pressed="false">UART</button>
+              </div>
+              <div class="tool-group" role="group" aria-label="View modes">
+                <button class="tool" type="button" id="toggle-xray" aria-pressed="false">X-ray</button>
+                <button class="tool" type="button" id="toggle-signals" aria-pressed="false">Signals</button>
+                <button class="tool" type="button" id="toggle-labels" aria-pressed="true">Labels</button>
+              </div>
+              <label class="slider-wrap" for="explode">
+                Explode
+                <input id="explode" type="range" min="0" max="100" value="0" />
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="wrap lab-grid">
+          <article class="panel" aria-labelledby="part-details-heading">
+            <div class="panel-head">
+              <h3 id="part-details-heading">Selected part</h3>
+              <span class="hud-pill" id="part-count">11 parts</span>
+            </div>
+            <div class="panel-body" id="part-detail">
+              <p class="detail-empty">
+                Click a component in the 3D view or a row in the bill of materials. Every
+                part carries a reference, a role, a footprint, pads, nets, and an illustrative
+                unit cost.
+              </p>
+              <ul class="detail-list">
+                <li><span>Board size</span><b>80 x 50 mm</b></li>
+                <li><span>Thickness</span><b>1.6 mm</b></li>
+                <li><span>Copper layers</span><b>2</b></li>
+                <li><span>Connections</span><b>24</b></li>
+                <li><span>Named nets</span><b>7</b></li>
+                <li><span>BOM total</span><b>$9.96</b></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="panel" aria-labelledby="bom-heading">
+            <div class="panel-head">
+              <h3 id="bom-heading">Bill of materials</h3>
+              <span class="hud-pill">Illustrative USD</span>
+            </div>
+            <div class="panel-body bom-table-wrap">
+              <table class="bom-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Value</th>
+                    <th scope="col">Footprint</th>
+                    <th scope="col">Qty</th>
+                    <th scope="col">Unit</th>
+                    <th scope="col">Total</th>
+                  </tr>
+                </thead>
+                <tbody id="bom-body"></tbody>
+              </table>
+            </div>
+            <div class="bom-total">
+              <span>Estimated material total</span>
+              <strong id="bom-total">$9.96</strong>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="overview" aria-labelledby="overview-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">01 / OVERVIEW</span>
+              <h2 class="section-title" id="overview-title">A board is a system, not a picture.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                Most beginners see a green rectangle. Engineers see a power tree, a return
+                path, a timing budget, and a manufacturing contract. The studio makes those
+                layers visible, then gives you a way to act on them.
+              </p>
+            </div>
+          </div>
+
+          <div class="pillar-grid">
+            <article class="pillar reveal">
+              <div class="pillar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 7h10v6H4zM14 13h6v7h-6zM6 17h5v4" />
+                  <circle cx="4" cy="7" r="2" fill="currentColor" stroke="none" />
+                  <circle cx="20" cy="20" r="2" fill="currentColor" stroke="none" />
+                </svg>
+              </div>
+              <h3>Learn by doing</h3>
+              <p>
+                Orbit the board, select a part, trace a net, then route it yourself. Every
+                interaction maps to a concept you can name and defend.
+              </p>
+            </article>
+            <article class="pillar reveal">
+              <div class="pillar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M4 19V5M4 19h16M7 15l3-4 3 2 4-6" />
+                  <circle cx="7" cy="15" r="1.4" fill="currentColor" stroke="none" />
+                  <circle cx="10" cy="11" r="1.4" fill="currentColor" stroke="none" />
+                  <circle cx="13" cy="13" r="1.4" fill="currentColor" stroke="none" />
+                  <circle cx="17" cy="7" r="1.4" fill="currentColor" stroke="none" />
+                </svg>
+              </div>
+              <h3>Design with constraints</h3>
+              <p>
+                A typed specification validates dimensions, references, pads, nets, and BOM
+                before a single file is exported. Constraints are the design.
+              </p>
+            </article>
+            <article class="pillar reveal">
+              <div class="pillar-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M3 12h3l2-5 3 10 2-7 2 4h6" />
+                  <path d="M3 20h18" opacity=".35" />
+                </svg>
+              </div>
+              <h3>Analyze with evidence</h3>
+              <p>
+                Three-phase scenarios produce RMS, THD, severity, and a documented heuristic,
+                not a black-box score. Every number has a method behind it.
+              </p>
+            </article>
+          </div>
+
+          <div class="audience-grid">
+            <article class="audience reveal">
+              <h4>Students</h4>
+              <p>See the return path before the exam asks about it.</p>
+            </article>
+            <article class="audience reveal">
+              <h4>Hardware startups</h4>
+              <p>Ship a spec, a BOM, and a review trail with the prototype.</p>
+            </article>
+            <article class="audience reveal">
+              <h4>Power teams</h4>
+              <p>Turn a waveform argument into a shared, exportable summary.</p>
+            </article>
+            <article class="audience reveal">
+              <h4>Educators</h4>
+              <p>Use an open board and a reproducible lab instead of slides.</p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section game-section" id="game" aria-labelledby="game-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">02 / SIGNAL SPRINT</span>
+              <h2 class="section-title" id="game-title">Route it like it matters.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                Four missions on the same board. You get gold pads, keep-outs, a length
+                budget, and one rule: every trace has a return path. Click a pad, bend the
+                trace on empty board, then land on the matching pad.
+              </p>
+            </div>
+          </div>
+
+          <div class="game-grid">
+            <div class="game-card">
+              <div class="game-stage" id="game-stage">
+                <canvas
+                  id="game-canvas"
+                  tabindex="0"
+                  role="img"
+                  aria-label="Routing game. Select a gold pad, click empty board space to add waypoints, then select the matching pad. The mission task list in the panel is also keyboard accessible."
+                ></canvas>
+                <div class="webgl-fallback" id="game-fallback">
+                  This browser could not start WebGL. The mission briefs and routing rules are
+                  still readable in the mission panel.
+                </div>
+                <div class="game-hud game-hud-left">
+                  <span class="game-hud-label">Mission</span>
+                  <strong class="game-hud-value" id="game-level-label">01 / 04</strong>
+                </div>
+                <div class="game-hud game-hud-right">
+                  <span class="game-hud-label">Score</span>
+                  <strong class="game-hud-value" id="game-score-label">0000</strong>
+                </div>
+                <div class="game-toolbar">
+                  <button class="tool" type="button" id="game-undo">Undo point</button>
+                  <button class="tool" type="button" id="game-clear">Clear route</button>
+                  <button class="tool" type="button" id="game-hint-btn">Hint</button>
+                  <button class="tool" type="button" id="game-voice" aria-pressed="false">Voice</button>
+                </div>
+                <div class="game-hint" id="game-hint">
+                  Click a gold pad to start. Click empty board to bend. Click the matching pad to finish.
+                </div>
+                <div class="game-overlay" id="game-overlay" hidden>
+                  <div class="result-card" role="dialog" aria-modal="true" aria-labelledby="game-result-title">
+                    <div class="result-stars" id="game-result-stars">***</div>
+                    <h3 id="game-result-title">Mission complete</h3>
+                    <p id="game-result-copy">The rail is clean. The return path is continuous.</p>
+                    <div class="result-actions">
+                      <button class="btn btn-primary btn-small" type="button" id="game-next">Next mission</button>
+                      <button class="btn btn-small" type="button" id="game-replay">Replay</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <aside class="panel game-panel" aria-labelledby="mission-heading">
+              <div class="panel-head">
+                <h3 id="mission-heading">Mission control</h3>
+                <div class="level-chips" id="level-chips" aria-label="Mission selector">
+                  <button class="level-chip is-current" type="button" data-level="0">01</button>
+                  <button class="level-chip" type="button" data-level="1">02</button>
+                  <button class="level-chip" type="button" data-level="2">03</button>
+                  <button class="level-chip" type="button" data-level="3">04</button>
+                </div>
+              </div>
+              <div class="panel-body">
+                <h3 class="mission-title" id="game-mission-title">Power first</h3>
+                <p class="mission-brief" id="game-mission-brief">
+                  Bring the 3.3 V rail from the regulator to the ESP32 and the motion sensor.
+                </p>
+                <div class="mission-lesson" id="game-mission-lesson">
+                  <strong>Why it matters.</strong> Power traces carry more current than signals.
+                  Give them width, a short path, and a clean return.
+                </div>
+                <ul class="task-list" id="game-task-list"></ul>
+                <div class="game-stats">
+                  <div class="game-stat">
+                    <span>Routed</span>
+                    <strong id="game-routed">0 / 2</strong>
+                  </div>
+                  <div class="game-stat">
+                    <span>Budget</span>
+                    <strong id="game-budget">0 / 125 mm</strong>
+                  </div>
+                  <div class="game-stat">
+                    <span>Attempts</span>
+                    <strong id="game-attempts">0 bad</strong>
+                  </div>
+                </div>
+                <div class="game-feedback is-info" id="game-feedback">
+                  Start with a gold pad. The board is listening.
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="learn" aria-labelledby="learn-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">03 / LEARNING PATH</span>
+              <h2 class="section-title" id="learn-title">From first copper to controlled impedance.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                Twelve cards, five tracks, and no hand-waving. Search for a term, open the
+                detail, and mark it learned when you can explain it back without looking.
+              </p>
+            </div>
+          </div>
+
+          <div class="learn-toolbar reveal">
+            <div class="search-wrap">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.5" />
+                <path d="m10.5 10.5 3 3" stroke-linecap="round" />
+              </svg>
+              <input
+                class="search-input"
+                id="concept-search"
+                type="search"
+                placeholder="Search: return path, impedance, DFM, decoupling..."
+                aria-label="Search concepts"
+              />
+            </div>
+            <div class="chip-row" id="concept-filters" role="group" aria-label="Filter concepts by track">
+              <button class="chip is-active" type="button" data-category="All">All</button>
+              <button class="chip" type="button" data-category="Foundations">Foundations</button>
+              <button class="chip" type="button" data-category="Layout">Layout</button>
+              <button class="chip" type="button" data-category="Power">Power</button>
+              <button class="chip" type="button" data-category="High-speed">High-speed</button>
+              <button class="chip" type="button" data-category="Manufacturing">Manufacturing</button>
+            </div>
+          </div>
+
+          <div class="concept-map reveal" aria-labelledby="map-title">
+            <div class="concept-map-head">
+              <div>
+                <span class="concept-category">Concept map</span>
+                <h3 id="map-title">Your knowledge graph</h3>
+              </div>
+              <span class="hud-pill" id="map-progress">0 / 12</span>
+            </div>
+            <svg
+              id="concept-svg"
+              viewBox="0 0 720 340"
+              role="img"
+              aria-label="Concept map linking twelve board topics to the central board node. Learned topics are highlighted."
+            ></svg>
+            <p class="concept-map-note">Tick a card as learned and the map lights up. Select a node to jump to its card.</p>
+          </div>
+
+          <div class="learn-progress reveal">
+            <span id="learn-progress-text">0 of 12 learned</span>
+            <div class="progress-track" aria-hidden="true">
+              <div class="progress-fill" id="learn-progress-fill"></div>
+            </div>
+            <span id="concept-count">12 cards</span>
+          </div>
+
+          <div class="concept-grid" id="concept-grid"></div>
+        </div>
+      </section>
+
+      <section class="section" id="quiz" aria-labelledby="quiz-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">04 / KNOWLEDGE CHECK</span>
+              <h2 class="section-title" id="quiz-title">Ten questions. No hand-waving.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                A quick check from board anatomy to return paths. Every answer gets an
+                explanation, because a score without feedback is just noise.
+              </p>
+            </div>
+          </div>
+
+          <div class="quiz-shell">
+            <div class="quiz-card" id="quiz-content">
+              <noscript>
+                <p class="detail-empty">Enable JavaScript to take the interactive quiz.</p>
+              </noscript>
+            </div>
+            <aside class="quiz-side">
+              <h3>Why this quiz exists</h3>
+              <p>
+                The questions mirror the twelve concept cards. If an answer surprises you,
+                the explanation tells you which card to open next.
+              </p>
+              <div class="quiz-score">
+                <strong id="quiz-best">0 / 10</strong>
+                <span>Best score on this device</span>
+              </div>
+              <div class="quiz-score">
+                <strong id="quiz-current">0 / 10</strong>
+                <span>Current run</span>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="business" aria-labelledby="business-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">05 / BUSINESS</span>
+              <h2 class="section-title" id="business-title">A small tool with a real market.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                The PCB industry is enormous, but the everyday pain is small and specific: a
+                first spin that fails, a report nobody can read, a student who never sees the
+                return path. That is the wedge.
+              </p>
+            </div>
+          </div>
+
+          <div class="market-strip">
+            <div class="market-stat reveal">
+              <strong>$85.2B</strong>
+              <span>Global PCB output, 2025</span>
+              <small>Prismark estimate. Other trackers are close but not identical.</small>
+            </div>
+            <div class="market-stat reveal">
+              <strong>~$102B</strong>
+              <span>2026 estimate</span>
+              <small>Prismark Q4 2025 outlook. Forecasts move with the cycle.</small>
+            </div>
+            <div class="market-stat reveal">
+              <strong>$123B+</strong>
+              <span>2030 estimate</span>
+              <small>Long-range forecast. A later Q1 2026 update was higher still.</small>
+            </div>
+            <div class="market-stat reveal">
+              <strong>2-4 wk</strong>
+              <span>Typical prototype turn</span>
+              <small>Depends on fab, stackup, finish, and queue.</small>
+            </div>
+          </div>
+
+          <div class="biz-grid">
+            <article class="biz-card reveal">
+              <h3>Who feels the pain</h3>
+              <p>Four groups, one common gap: the design intent is hard to see and harder to explain.</p>
+              <div class="segment-list">
+                <div class="segment">
+                  <div><h4>Students and educators</h4><p>Theory is abstract and EDA tools are intimidating.</p></div>
+                  <p class="offer">Guided 3D lab, routing game, plain-language checks.</p>
+                </div>
+                <div class="segment">
+                  <div><h4>Hardware startups</h4><p>A first spin is expensive and documentation is rushed.</p></div>
+                  <p class="offer">Reproducible spec, BOM, report bundle, review checklist.</p>
+                </div>
+                <div class="segment">
+                  <div><h4>Power and reliability teams</h4><p>Waveform data is hard to explain across disciplines.</p></div>
+                  <p class="offer">Transparent three-phase scenarios and exportable summaries.</p>
+                </div>
+                <div class="segment">
+                  <div><h4>Training and maker spaces</h4><p>Good curriculum is expensive to build and maintain.</p></div>
+                  <p class="offer">Open courseware with a real board and analytics pipeline.</p>
+                </div>
+              </div>
+            </article>
+
+            <article class="biz-card reveal">
+              <h3>A realistic model</h3>
+              <p>Open core, paid depth. No fake enterprise tier, no pretend revenue.</p>
+              <div class="model-list">
+                <div class="model-row"><b>Open core</b><span>Free</span><p>MIT-licensed Python package and browser studio. Use it, fork it, teach with it.</p></div>
+                <div class="model-row"><b>Workshop</b><span>Per cohort</span><p>Guided PCB and power-quality sessions built around the studio and the real board.</p></div>
+                <div class="model-row"><b>Custom board pack</b><span>Project</span><p>Validated spec, simplified footprints, report templates, and a design review.</p></div>
+                <div class="model-row"><b>Integration support</b><span>Retainer</span><p>Bring the analytics and reporting into an existing engineering workflow.</p></div>
+              </div>
+            </article>
+
+            <article class="biz-card roi-card reveal">
+              <h3>Estimate the value</h3>
+              <p>Change the assumptions. The arithmetic is intentionally simple and shown.</p>
+              <div class="roi-grid">
+                <div class="field"><label for="roi-team">Engineers</label><input id="roi-team" type="number" min="1" max="500" step="1" value="6" /></div>
+                <div class="field"><label for="roi-hours">Hours / week on rework and docs</label><input id="roi-hours" type="number" min="0" max="40" step="1" value="5" /></div>
+                <div class="field"><label for="roi-rate">Loaded hourly cost (USD)</label><input id="roi-rate" type="number" min="1" max="500" step="1" value="55" /></div>
+                <div class="field"><label for="roi-reduction">Reduction (%)</label><input id="roi-reduction" type="number" min="0" max="80" step="1" value="25" /></div>
+                <div class="field"><label for="roi-cost">Annual tool cost (USD)</label><input id="roi-cost" type="number" min="0" max="100000" step="100" value="6000" /></div>
+              </div>
+              <div class="roi-output">
+                <div class="roi-out"><span>Hours saved / year</span><strong id="roi-hours-out">345</strong></div>
+                <div class="roi-out"><span>Annual savings</span><strong id="roi-savings-out">$18,975</strong></div>
+                <div class="roi-out"><span>Payback</span><strong id="roi-payback-out">3.8 mo</strong></div>
+              </div>
+              <p class="roi-note">
+                Assumption: savings = engineers x hours x 46 working weeks x reduction.
+                Payback = tool cost / annual savings x 12. Planning estimate, not a promise.
+              </p>
+            </article>
+
+            <article class="biz-card reveal">
+              <h3>What could go wrong</h3>
+              <p>Stated early, because a business case without risks is a pitch, not a plan.</p>
+              <ul class="risk-list">
+                <li>KiCad's Python API varies by release; the export path is optional and tested separately.</li>
+                <li>The fault model is a teaching approximation, not a protection-coordination study.</li>
+                <li>The PCB market is crowded; the differentiation is the learning-to-report workflow, not raw EDA features.</li>
+                <li>Forecast figures are third-party estimates and should be quoted with their date and scope.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="research" aria-labelledby="research-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">06 / RESEARCH</span>
+              <h2 class="section-title" id="research-title">Transparent by design.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                The analytics model is small enough to inspect and reproducible enough to
+                test. The goal is not a black box; it is a shared language between layout,
+                power, and manufacturing.
+              </p>
+            </div>
+          </div>
+
+          <div class="research-grid">
+            <article class="research-card reveal">
+              <h3>Method</h3>
+              <p>
+                A balanced three-phase voltage is generated at 10 kHz, 50 Hz, and 311 V peak.
+                A fault is applied after a configurable instant. The detector compares the
+                weakest short window in each phase against the nominal RMS.
+              </p>
+              <div class="equation-list">
+                <div class="equation">
+                  <span>Balanced phase voltage</span>
+                  <code>v_a(t) = V_p sin(2πft), v_b(t) = V_p sin(2πft - 120°), v_c(t) = V_p sin(2πft + 120°)</code>
+                </div>
+                <div class="equation">
+                  <span>RMS</span>
+                  <code>V_rms = sqrt((1/N) Σ v[n]²)</code>
+                </div>
+                <div class="equation">
+                  <span>Total harmonic distortion</span>
+                  <code>THD = sqrt(Σ H₂..H₁₀²) / H₁</code>
+                </div>
+                <div class="equation">
+                  <span>Windowed severity</span>
+                  <code>severity = 1 - min_w(V_rms,w / V_rms,nominal)</code>
+                </div>
+              </div>
+            </article>
+
+            <article class="research-card reveal">
+              <h3>Validation and limits</h3>
+              <p>
+                Synthetic tests cover nominal, open-phase, short-circuit, late-fault, and
+                invalid-input cases. The demo bundle builds in CI without KiCad.
+              </p>
+              <ul class="check-list">
+                <li>Round-trip tests preserve board specifications through JSON and regenerate the BOM.</li>
+                <li>Next: hardware-in-the-loop validation with a relay test set and a calibrated power-quality recorder.</li>
+                <li>Next: expert review against IEC 61000-4-30 measurement classes.</li>
+              </ul>
+              <ul class="check-list is-warning">
+                <li>No electromagnetic, thermal, or mechanical solver is included.</li>
+                <li>Footprints and traces are simplified reference geometry, not fabrication-ready artwork.</li>
+                <li>Fault detection is a transparent RMS heuristic, not a trained classifier or a certified relay.</li>
+                <li>The game teaches routing intuition; it is not a substitute for DRC, DFM, or expert review.</li>
+                <li>Market figures are third-party estimates, quoted with dates and caveats.</li>
+              </ul>
+            </article>
+
+            <article class="research-card reveal">
+              <h3>References</h3>
+              <p>Standards, tooling, and market sources used to frame the work.</p>
+              <div class="citation-list">
+                <div class="citation"><a href="https://docs.kicad.org/" target="_blank" rel="noopener noreferrer">KiCad documentation</a><span>Board editor, Python API, and fabrication outputs.</span></div>
+                <div class="citation"><a href="https://www.ipc.org/" target="_blank" rel="noopener noreferrer">IPC-2221 and IPC-2152</a><span>Generic PCB design and current-carrying capacity references.</span></div>
+                <div class="citation"><a href="https://webstore.iec.ch/" target="_blank" rel="noopener noreferrer">IEC 61000-4-30</a><span>Power-quality measurement methods and classes.</span></div>
+                <div class="citation"><a href="https://www.prismark.com/" target="_blank" rel="noopener noreferrer">Prismark PCB market outlook</a><span>Industry output estimates; figures vary by report date.</span></div>
+                <div class="citation"><a href="https://threejs.org/docs/" target="_blank" rel="noopener noreferrer">Three.js documentation</a><span>WebGL rendering and controls used by the studio.</span></div>
+              </div>
+              <p class="citation-note">
+                Market figures are quoted to show scale, not to imply a specific addressable
+                market for this project. Always cite the report date and scope.
+              </p>
+            </article>
+
+            <article class="research-card reveal">
+              <h3>Reproduce the study</h3>
+              <p>The same seed, window, and fault timing produce the same report.</p>
+              <div class="equation">
+                <span>One command</span>
+                <code>pcb-design analyze --fault short --phase B --seed 7 --output analysis.xlsx --report report.md</code>
+              </div>
+              <div class="equation">
+                <span>Full demo</span>
+                <code>pcb-design demo --out-dir demo-output</code>
+              </div>
+              <ul class="check-list">
+                <li>Inputs: 10 kHz, 50 Hz, 311 V peak, fault at 40 ms, seed 7.</li>
+                <li>Outputs: waveform sheets, summary, field reference, Markdown report.</li>
+                <li>Tests: 40+ automated checks, including late-fault detection and JSON round-tripping.</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="start" aria-labelledby="start-title">
+        <div class="wrap">
+          <div class="section-head reveal">
+            <div>
+              <span class="section-number">07 / START</span>
+              <h2 class="section-title" id="start-title">Run it in under a minute.</h2>
+            </div>
+            <div>
+              <p class="section-lede">
+                Clone, install, and build the full demo. KiCad is optional; the core workflow
+                is not. The browser studio is static and deploys on GitHub Pages.
+              </p>
+            </div>
+          </div>
+
+          <div class="start-grid">
+            <div class="terminal reveal">
+              <div class="terminal-bar">
+                <i></i><i></i><i></i>
+                <span>bash / zsh</span>
+              </div>
+              <pre><span class="comment"># 1. clone the repository</span>
+<span class="prompt">$</span> git clone https://github.com/M0-AR/pcb_design.git
+<span class="prompt">$</span> cd pcb_design
+
+<span class="comment"># 2. install the package and development tools</span>
+<span class="prompt">$</span> python -m pip install -e ".[dev]"
+
+<span class="comment"># 3. build the KiCad-free demo bundle</span>
+<span class="prompt">$</span> pcb-design demo --out-dir demo-output
+
+<span class="comment"># 4. optional: export a .kicad_pcb with KiCad's Python</span>
+<span class="prompt">$</span> pcb-design board --output board.kicad_pcb</pre>
+              <div class="copy-row">
+                <code id="copy-install">python -m pip install -e ".[dev]"</code>
+                <button class="btn btn-small" type="button" id="copy-button" data-copy="python -m pip install -e &quot;.[dev]&quot;">Copy</button>
+              </div>
+            </div>
+
+            <div class="reveal">
+              <div class="start-steps">
+                <div class="start-step"><b>01</b><div><h4>Clone</h4><p>Get the Python package, tests, examples, and the static studio.</p></div></div>
+                <div class="start-step"><b>02</b><div><h4>Install</h4><p>NumPy, pandas, and openpyxl are the core dependencies. Development extras add pytest and ruff.</p></div></div>
+                <div class="start-step"><b>03</b><div><h4>Run the demo</h4><p>Write a board spec, BOM, three fault scenarios, an Excel workbook, and a Markdown report.</p></div></div>
+                <div class="start-step"><b>04</b><div><h4>Open KiCad</h4><p>Install KiCad 8+, run the board command with its Python, then perform a full DRC and DFM review.</p></div></div>
+              </div>
+
+              <div class="status-card" style="margin-top: 16px">
+                <h3>What is real today</h3>
+                <p>Honest status, because trust is a feature.</p>
+                <ul class="status-list">
+                  <li>Validated 11-part board specification with 24 connections and 7 nets.</li>
+                  <li>Three-phase nominal, open, and short scenarios with Excel and Markdown output.</li>
+                  <li>40+ automated tests, a one-command demo, and a KiCad-optional workflow.</li>
+                  <li>3D lab, routing game, concept library, and quiz in the static studio.</li>
+                  <li class="is-next">Fabrication-ready artwork and full DRC/DFM sign-off.</li>
+                  <li class="is-next">Hardware-in-the-loop validation and a trained fault classifier.</li>
+                  <li class="is-next">Stackup impedance and thermal solvers.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="hero-actions" style="margin-top: 26px">
+            <a class="btn btn-primary" href="https://github.com/M0-AR/pcb_design" target="_blank" rel="noopener noreferrer">Open the repository</a>
+            <a class="btn" href="https://github.com/M0-AR/pcb_design/releases" target="_blank" rel="noopener noreferrer">Releases</a>
+            <a class="btn" href="https://github.com/M0-AR/pcb_design/issues" target="_blank" rel="noopener noreferrer">Issues</a>
+            <a class="btn btn-ghost" href="https://github.com/M0-AR/pcb_design/blob/main/LICENSE" target="_blank" rel="noopener noreferrer">MIT license</a>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="wrap">
+        <div class="footer-grid">
+          <div class="footer-brand">
+            <a class="brand" href="#top">
+              <svg class="brand-mark" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+                <rect x="3.5" y="3.5" width="33" height="33" rx="7" stroke="currentColor" stroke-width="1.4" />
+                <path d="M12 13h8v6h-8zM20 19h8v8h-8zM13 27h5v5" stroke="currentColor" stroke-width="1.4" />
+                <circle cx="12" cy="13" r="2.2" fill="currentColor" />
+                <circle cx="28" cy="27" r="2.2" fill="currentColor" />
+                <circle cx="13" cy="32" r="2.2" fill="currentColor" />
+              </svg>
+              <span class="brand-text">PCB / STUDIO<small>open hardware workbench</small></span>
+            </a>
+            <p>
+              A transparent PCB and power-quality workbench. Built for the moment a beginner
+              asks "why does the return current go there?" and the answer finally makes sense.
+            </p>
+          </div>
+          <nav class="footer-links" aria-label="Footer navigation">
+            <a href="#lab">3D lab</a>
+            <a href="#game">Game</a>
+            <a href="#learn">Learn</a>
+            <a href="#quiz">Quiz</a>
+            <a href="#business">Business</a>
+            <a href="#research">Research</a>
+            <a href="https://github.com/M0-AR/pcb_design" target="_blank" rel="noopener noreferrer">GitHub</a>
+          </nav>
+        </div>
+        <div class="footer-bottom">
+          <span>MIT licensed · built with Python, NumPy, pandas, Three.js</span>
+          <span>No tracking · <span id="year">2026</span> · M0-AR</span>
+        </div>
+      </div>
+    </footer>
+
+    <script type="module" src="assets/js/main.js"></script>
+  </body>
+</html>

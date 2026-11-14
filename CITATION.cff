@@ -1,0 +1,22 @@
+cff-version: 1.2.0
+message: "If you use this software or its teaching material, please cite it as below."
+title: "PCB Design Studio"
+abstract: >-
+  An open-source toolkit for typed PCB board generation, three-phase
+  power-fault analytics, engineering reports, and an interactive 3D learning
+  studio for electronics and power-quality concepts.
+authors:
+  - family-names: "M0-AR"
+    name: "M0-AR"
+repository-code: "https://github.com/M0-AR/pcb_design"
+url: "https://m0-ar.github.io/pcb_design/"
+license: MIT
+version: "1.0.0"
+date-released: "2026-11-14"
+keywords:
+  - PCB design
+  - KiCad
+  - power quality
+  - fault analysis
+  - electronics education
+  - Three.js

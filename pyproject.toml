@@ -1,0 +1,101 @@
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pcb-design-studio"
+version = "1.0.0"
+description = "Open-source PCB board generation, three-phase power-fault analytics, and an interactive 3D engineering studio."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "M0-AR" }]
+keywords = [
+    "pcb",
+    "kicad",
+    "electronics",
+    "hardware",
+    "design-automation",
+    "power-systems",
+    "fault-analysis",
+    "education",
+    "threejs",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Education",
+    "Intended Audience :: Manufacturing",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Education",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Electronic Design Automation (EDA)",
+]
+dependencies = [
+    "numpy>=1.26",
+    "pandas>=2.1",
+    "openpyxl>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.2",
+    "pytest>=8.2",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+    "twine>=5.1",
+]
+site = [
+    "playwright>=1.49",
+]
+
+[project.scripts]
+pcb-design = "pcb_design.cli:main"
+
+[project.urls]
+Homepage = "https://m0-ar.github.io/pcb_design/"
+Repository = "https://github.com/M0-AR/pcb_design"
+Issues = "https://github.com/M0-AR/pcb_design/issues"
+Changelog = "https://github.com/M0-AR/pcb_design/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/M0-AR/pcb_design#readme"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pcb_design"]
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "src/",
+    "tests/",
+    "examples/",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md",
+    "CITATION.cff",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+filterwarnings = ["error::DeprecationWarning:pcb_design.*"]
+
+[tool.coverage.run]
+source = ["pcb_design"]
+branch = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "tests", "examples", "scripts"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["pcb_design"]

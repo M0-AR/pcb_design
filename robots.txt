@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://m0-ar.github.io/pcb_design/sitemap.xml
